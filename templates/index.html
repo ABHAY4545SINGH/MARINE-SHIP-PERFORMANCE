@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marine Metrics Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #0a0a0a;
+      background: #e0f7fa;
+      scroll-behavior: smooth;
+    }
+
+    /* Animation keyframes */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 1s ease forwards;
+      opacity: 0;
+    }
+
+    .fade-in-up {
+      animation: fadeInUp 1s ease forwards;
+      opacity: 0;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #006064;
+      padding: 1rem 2rem;
+      color: white;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .navbar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-weight: 500;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #80deea;
+      transform: scale(1.05);
+    }
+
+    /* Hero Section */
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      padding: 5rem 2rem;
+      background: linear-gradient(to right, #e0f7fa, #ffffff);
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    .hero-text {
+      flex: 1 1 45%;
+      padding: 1rem;
+      animation: fadeInUp 1.2s ease-in-out;
+    }
+
+    .hero-text h1 {
+      font-size: 3.2rem;
+      margin-bottom: 1rem;
+      color: #004d40;
+    }
+
+    .hero-text p {
+      font-size: 1.2rem;
+      color: #333;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-text .cta-button {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background-color: #00838f;
+      color: white;
+      text-decoration: none;
+      border-radius: 25px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .hero-text .cta-button:hover {
+      background-color: #006064;
+      transform: scale(1.05);
+    }
+
+    .hero-img {
+      flex: 1 1 45%;
+      padding: 1rem;
+      text-align: center;
+      animation: fadeInUp 1.5s ease-in-out;
+    }
+
+    .hero-img img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .hero-img img:hover {
+      transform: scale(1.03);
+    }
+
+    /* Marine Metrics Section */
+    .metrics {
+      padding: 4rem 2rem;
+      background: #b2ebf2;
+      text-align: center;
+    }
+
+    .metrics h2 {
+      font-size: 2.5rem;
+      color: #004d40;
+      margin-bottom: 2rem;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+
+    .metrics-grid {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .metric-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      width: 250px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeInUp 1.3s ease-in-out;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .metric-card h3 {
+      color: #00796b;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-card p {
+      color: #333;
+      font-size: 1rem;
+    }
+
+    /* Footer */
+    .footer {
+      background: #004d40;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      animation: fadeIn 1s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div class="logo">OceanData</div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#metrics">Data Metrics</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Explore Real-Time Marine Metrics</h1>
+      <p>Dive into oceanographic data like  to understand our changing seas.</p>
+      <a href="#metrics" class="cta-button">View Metrics</a>
+    </div>
+    <div class="hero-img">
+      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e" alt="Marine Data Ocean View">
+    </div>
+  </section>
+
+  <section class="metrics" id="metrics">
+    <h2>Live Marine Metrics</h2>
+    <div class="metrics-grid">
+      <a href="/maintenance and weather"><div class="metric-card">
+        <h3>Maintenance and Weather</h3>
+        <p>Avg: 22°C<br>Tracked globally via buoys and satellites.</p>
+      </div></a>
+      <a href="/Efficiency_analysis"><div class="metric-card">
+        <h3>Efficiency analysis</h3>
+        <p>Avg: 35 PSU<br>Critical for understanding ocean circulation.</p>
+      </div></a>
+      <a href="/Dashboard"><div class="metric-card">
+        <h3>Dashboard</h3>
+        <p>Avg: 1.2 m<br>Measured to monitor coastal safety and ship routes.</p>
+      </div></a>
+      <a href="/operational_cost"><div class="metric-card">
+        <h3>Operational cost</h3>
+        <p>Avg: 1.2 m<br>Measured to monitor coastal safety and ship routes.</p>
+      </div></a>
+      <a href="/speed_and_engine"><div class="metric-card">
+        <h3>Speed and Engine</h3>
+        <p>Avg: 1.2 m<br>Measured to monitor coastal safety and ship routes.</p>
+      </div></a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    &copy; 2025 OceanData. All rights reserved.
+  </footer>
+
+</body>
+</html>

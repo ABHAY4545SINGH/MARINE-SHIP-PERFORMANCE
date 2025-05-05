@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Maintenance & Weather Impact Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f9fc;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      background: #37474f;
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .section {
+      padding: 4rem 2rem;
+    }
+
+    .hero {
+      background: #eceff1;
+    }
+
+    .hero-alt {
+      background: #ffffff;
+    }
+
+    .chart-wrapper {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      max-width: 800px;
+      margin: auto;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+    }
+
+    .conclusions {
+      background: #cfd8dc;
+      padding: 2rem;
+      border-radius: 10px;
+      margin: 3rem 2rem;
+    }
+
+    .conclusions h2 {
+      color: #263238;
+      margin-bottom: 1rem;
+    }
+
+    .conclusions ul {
+      line-height: 1.8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Maintenance & Weather Impact Dashboard</h1>
+    <p>Analyzing the effect of maintenance status and weather on ship performance</p>
+  </header>
+
+  <div class="container">
+
+    <!-- Grouped Bar Chart: Maintenance Status vs Avg Cost/Speed -->
+    <div class="section hero">
+      <div class="chart-wrapper">
+        {{graph12|safe}}
+      </div>
+    </div>
+
+    <!-- Bar Chart: Weather Condition vs Efficiency -->
+    <div class="section hero-alt">
+      <div class="chart-wrapper">
+        {{graph13|safe}}
+      </div>
+    </div>
+
+    <!-- Boxplot: Speed under Different Weather Conditions -->
+    <div class="section hero">
+      <div class="chart-wrapper">
+        {{graph14|safe}}
+      </div>
+    </div>
+
+    <!-- Heatmap: Cost vs Maintenance + Weather -->
+    <div class="section hero-alt">
+      <div class="chart-wrapper">
+        {{graph15|safe}}
+      </div>
+    </div>
+
+    <!-- Conclusions -->
+    <div class="conclusions">
+      <h2>Conclusions</h2>
+      <ul>
+        <li>🔧 <strong>Poor maintenance</strong> increases cost and lowers efficiency significantly.</li>
+        <li>🌪 <strong>Stormy weather</strong> is the most challenging, reducing both speed and efficiency the most.</li>
+        <li>🛠 <strong>Preventive maintenance</strong> strategies lead to major cost savings and better overall ship performance.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Chart.js Scripts -->
+  <script>
+    // 1. Grouped Bar Chart: Maintenance Status vs Avg Cost/Speed
+    new Chart(document.getElementById('maintenanceCostSpeed'), {
+      type: 'bar',
+      data: {
+        labels: ['Good', 'Average', 'Poor'],
+        datasets: [
+          {
+            label: 'Average Cost ($)',
+            data: [500000, 650000, 800000],
+            backgroundColor: '#546e7a'
+          },
+          {
+            label: 'Average Speed (knots)',
+            data: [18, 16.5, 15],
+            backgroundColor: '#90a4ae'
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Maintenance Status vs Average Cost and Speed'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // 2. Bar Chart: Weather Condition vs Efficiency
+    new Chart(document.getElementById('weatherEfficiency'), {
+      type: 'bar',
+      data: {
+        labels: ['Clear', 'Rainy', 'Stormy', 'Foggy'],
+        datasets: [{
+          label: 'Efficiency (%)',
+          data: [80, 70, 55, 65],
+          backgroundColor: '#78909c'
+        }]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Weather Condition vs Efficiency'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // 3. Boxplot: Speed under Different Weather Conditions
+    new Chart(document.getElementById('weatherSpeedBoxplot'), {
+      type: 'boxplot',
+      data: {
+        labels: ['Clear', 'Rainy', 'Stormy', 'Foggy'],
+        datasets: [{
+          label: 'Speed Distribution (knots)',
+          backgroundColor: '#607d8b',
+          borderColor: '#455a64',
+          borderWidth: 1,
+          data: [
+            { min: 17, max: 20, median: 18.5, q1: 18, q3: 19 },
+            { min: 15, max: 18, median: 16.5, q1: 16, q3: 17 },
+            { min: 12, max: 16, median: 14, q1: 13, q3: 15 },
+            { min: 14, max: 17, median: 15.5, q1: 15, q3: 16 }
+          ]
+        }]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Speed Distribution under Different Weather Conditions'
+          }
+        }
+      }
+    });
+
+    // 4. Heatmap: Cost vs Maintenance + Weather
+    new Chart(document.getElementById('costHeatmap'), {
+      type: 'matrix',
+      data: {
+        datasets: [{
+          label: 'Cost',
+          data: [
+            { x: 'Good', y: 'Clear', v: 450000 },
+            { x: 'Good', y: 'Stormy', v: 600000 },
+            { x: 'Poor', y: 'Clear', v: 700000 },
+            { x: 'Poor', y: 'Stormy', v: 900000 },
+          ],
+          backgroundColor(context) {
+            const value = context.dataset.data[context.dataIndex].v;
+            const alpha = (value - 450000) / (900000 - 450000);
+            return rgba(84, 110, 122, ${alpha});
+          },
+          width: ({chart}) => (chart.chartArea || {}).width / 4 - 10,
+          height: ({chart}) => (chart.chartArea || {}).height / 4 - 10,
+        }]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Cost vs Maintenance Status and Weather Condition'
+          }
+        },
+        scales: {
+          x: {
+            type: 'category',
+            labels: ['Good', 'Poor']
+          },
+          y: {
+            type: 'category',
+            labels: ['Clear', 'Stormy']
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

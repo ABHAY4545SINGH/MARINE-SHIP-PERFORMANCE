@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Speed & Engine Performance Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f9fc;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      background: #01579b;
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .section {
+      padding: 4rem 2rem;
+    }
+
+    .hero {
+      background: #e3f2fd;
+    }
+
+    .hero-alt {
+      background: #ffffff;
+    }
+
+    .chart-wrapper {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      max-width: 800px;
+      margin: auto;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+    }
+
+    .conclusions {
+      background: #bbdefb;
+      padding: 2rem;
+      border-radius: 10px;
+      margin: 3rem 2rem;
+    }
+
+    .conclusions h2 {
+      color: #0d47a1;
+      margin-bottom: 1rem;
+    }
+
+    .conclusions ul {
+      line-height: 1.8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>Speed & Engine Performance Dashboard</h1>
+    <p>Understanding speed trends and engine influence</p>
+  </header>
+
+  <div class="container">
+
+    <!-- Line Graph: Speed Over Ground vs Distance -->
+    <div class="section hero">
+      <div class="chart-wrapper">
+        {{graph16|safe}}
+      </div>
+    </div>
+
+    <!-- Bar Chart: Engine Type vs Avg Speed -->
+    <div class="section hero-alt">
+      <div class="chart-wrapper">
+        {{graph17|safe}}
+      </div>
+    </div>
+
+    <!-- Scatter Plot: Engine Power vs Speed -->
+    <div class="section hero">
+      <div class="chart-wrapper">
+        {{graph18|safe}}
+      </div>
+    </div>
+
+    <!-- Histogram: Speed Distribution -->
+    <div class="section hero-alt">
+      <div class="chart-wrapper">
+        {{graph19|safe}}
+      </div>
+    </div>
+
+    <!-- Conclusions -->
+    <div class="conclusions">
+      <h2>Conclusions</h2>
+      <ul>
+        <li>⚡ <strong>Diesel-Electric engines</strong> generally produce the highest average speeds.</li>
+        <li>🔧 <strong>Higher engine power correlates strongly</strong> with higher achievable speeds.</li>
+        <li>🚧 Bottlenecks occur mainly around <strong>mid-range speeds</strong> (12–16 knots), suggesting operational limitations.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Chart.js Scripts -->
+  <script>
+    // 1. Line Graph: Speed Over Ground vs Distance
+    new Chart(document.getElementById('speedDistanceLine'), {
+      type: 'line',
+      data: {
+        labels: ['0nm', '50nm', '100nm', '150nm', '200nm'],
+        datasets: [{
+          label: 'Speed Over Ground (knots)',
+          data: [16, 17.5, 18, 17, 16.5],
+          borderColor: '#0277bd',
+          fill: false,
+          tension: 0.3
+        }]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Speed Over Ground vs Distance'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false
+          }
+        }
+      }
+    });
+
+    // 2. Bar Chart: Engine Type vs Avg Speed
+    new Chart(document.getElementById('engineSpeedBar'), {
+      type: 'bar',
+      data: {
+        labels: ['Diesel', 'Diesel-Electric', 'Gas Turbine', 'Steam'],
+        datasets: [{
+          label: 'Avg Speed (knots)',
+          data: [17, 19, 18, 15],
+          backgroundColor: '#0288d1'
+        }]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Engine Type vs Avg Speed'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // 3. Scatter Plot: Engine Power vs Speed
+    new Chart(document.getElementById('enginePowerScatter'), {
+      type: 'scatter',
+      data: {
+        datasets: [{
+          label: 'Engine Power vs Speed',
+          data: [
+            {x: 5000, y: 15},
+            {x: 7000, y: 16.5},
+            {x: 9000, y: 18},
+            {x: 11000, y: 19},
+            {x: 13000, y: 20}
+          ],
+          backgroundColor: '#01579b'
+        }]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Engine Power vs Speed'
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Engine Power (kW)'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Speed (knots)'
+            },
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // 4. Histogram: Speed Distribution
+    new Chart(document.getElementById('speedHistogram'), {
+      type: 'bar',
+      data: {
+        labels: ['10-12', '12-14', '14-16', '16-18', '18-20', '20-22'],
+        datasets: [{
+          label: 'Number of Observations',
+          data: [5, 12, 20, 15, 8, 3],
+          backgroundColor: '#4fc3f7'
+        }]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Speed Distribution'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
