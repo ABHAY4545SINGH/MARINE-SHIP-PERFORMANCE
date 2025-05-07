@@ -1,285 +1,242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Efficiency Analysis Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f9fc;
-      margin: 0;
-      padding: 0;
-      color: #333;
-    }
-
-    header {
-      background:  #006064;
-      color: white;
-      padding: 2rem 1rem;
-      text-align: center;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: auto;
-    }
-
-    .section {
-      padding: 4rem 2rem;
-    }
-
-    .hero {
-      background: #e0f2f1;
-    }
-
-    .hero-alt {
-      background: #ffffff;
-    }
-
-    .chart-wrapper {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-      max-width: 800px;
-      margin: auto;
-    }
-
-    canvas {
-      width: 100% !important;
-      height: auto !important;
-    }
-
-    .conclusions {
-      background: #b2dfdb;
-      padding: 2rem;
-      border-radius: 10px;
-      margin: 3rem 2rem;
-    }
-
-    .conclusions h2 {
-      color: #004d40;
-      margin-bottom: 1rem;
-    }
-
-    .conclusions ul {
-      line-height: 1.8;
-    }
-  </style>
-</head>
-
-<body>
-
-  <header>
-    <h1>Efficiency Analysis Dashboard</h1>
-    <p>Investigating fuel efficiency and energy performance</p>
-  </header>
-
-  <div class="container">
-
-    <!-- Bar Chart: Ship Type vs Avg Efficiency -->
-    <div class="section hero">
-      <div class="chart-wrapper">
-        {{graph5|safe}}
-      </div>
-    </div>
-
-    <!-- Line Chart: Efficiency vs Distance Traveled -->
-    <div class="section hero-alt">
-      <div class="chart-wrapper">
-        {{graph6|safe}}
-      </div>
-    </div>
-
-    <!-- Scatter Plot: Speed vs Efficiency -->
-    <div class="section hero">
-      <div class="chart-wrapper">
-        {{graph7|safe}}
-      </div>
-    </div>
-
-    <!-- Heatmap: Efficiency vs Weather & Maintenance (Bubble chart) -->
-    <div class="section hero-alt">
-      <div class="chart-wrapper">
-        {{graph8|safe}}
-      </div>
-    </div>
-
-    <!-- Conclusions Section -->
-    <div class="conclusions">
-      <h2>Conclusions</h2>
-      <ul>
-        <li>⚙ <strong>Maintenance and weather conditions</strong> have the largest impact on fuel efficiency.</li>
-        <li>🚢 <strong>Passenger ships</strong> show the highest average energy efficiency.</li>
-        <li>🛤 <strong>Short domestic routes</strong> maintain better efficiency compared to longer routes.</li>
-        <li>🌪 <strong>Rough weather reduces efficiency</strong> by up to 20% in poorly maintained ships.</li>
-      </ul>
-    </div>
-
-  </div>
-
-  <!-- Chart.js Scripts -->
-  <script>
-    // 1. Bar Chart: Ship Type vs Avg Efficiency
-    new Chart(document.getElementById('shipEfficiencyBar'), {
-      type: 'bar',
-      data: {
-        labels: ['Container', 'Tanker', 'Bulk Carrier', 'Passenger', 'Other'],
-        datasets: [{
-          label: 'Avg Efficiency (%)',
-          data: [75, 68, 72, 80, 65],
-          backgroundColor: '#00796b'
-        }]
-      },
-      options: {
-        plugins: {
-          title: {
-            display: true,
-            text: 'Ship Type vs Avg Efficiency'
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 100
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efficiency Analysis Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --light: #f5f6fa;
+            --success: #2ecc71;
+            --danger: #e74c3c;
         }
-      }
-    });
-
-    // 2. Line Chart: Efficiency vs Distance Traveled
-    new Chart(document.getElementById('efficiencyDistanceLine'), {
-      type: 'line',
-      data: {
-        labels: ['100nm', '500nm', '1000nm', '1500nm', '2000nm'],
-        datasets: [{
-          label: 'Efficiency (%)',
-          data: [78, 74, 72, 70, 68],
-          borderColor: '#004d40',
-          fill: false,
-          tension: 0.3
-        }]
-      },
-      options: {
-        plugins: {
-          title: {
-            display: true,
-            text: 'Efficiency vs Distance Traveled'
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: false,
-            max: 100
-          }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
-      }
-    });
-
-    // 3. Scatter Plot: Speed vs Efficiency
-    new Chart(document.getElementById('speedEfficiencyScatter'), {
-      type: 'scatter',
-      data: {
-        datasets: [{
-          label: 'Speed vs Efficiency',
-          data: [
-            {x: 12, y: 80},
-            {x: 14, y: 78},
-            {x: 16, y: 74},
-            {x: 18, y: 70},
-            {x: 20, y: 65},
-            {x: 22, y: 60}
-          ],
-          backgroundColor: '#00695c'
-        }]
-      },
-      options: {
-        plugins: {
-          title: {
-            display: true,
-            text: 'Speed vs Efficiency'
-          }
-        },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Speed (knots)'
+        body {
+            background: var(--light);
+            color: var(--primary);
+            line-height: 1.6;
+        }
+        /* Navbar */
+        .navbar {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0.7rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .navbar .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.3rem 0.8rem;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+        .navbar .nav-links a.active, .navbar .nav-links a:hover {
+            background: var(--accent);
+        }
+        .navbar .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 2rem;
+        }
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(44,62,80,0.7), rgba(44,62,80,0.7)), url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=80') center/cover no-repeat;
+            padding: 2.5rem 2rem 2rem 2rem;
+            min-height: 180px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .hero-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #fff;
+            z-index: 2;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        }
+        .hero .back-home-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0.5rem 1.4rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            z-index: 3;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+        }
+        .hero .back-home-btn:hover {
+            background: #2176bd;
+        }
+        /* Insights */
+        .insights-panel {
+            background: white;
+            margin: 2rem auto 1.5rem auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            /* max-width: 900px; */
+            padding: 2rem 2rem 1.5rem 2rem;
+        }
+        .insights-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            color: var(--primary);
+        }
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+        }
+        .insight-card {
+            background: #f8fafd;
+            border-left: 4px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.2rem;
+        }
+        .insight-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+        .insight-text {
+            color: #444;
+            font-size: 0.97rem;
+        }
+        /* Dashboard Graphs */
+        .dashboard-graphs {
+            max-width: 900px;
+            margin: 0 auto 2rem auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .chart-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            width: 100%;
+            min-width: 0;
+        }
+        .chart-title {
+            font-size: 1.1rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .chart-card img, .chart-card canvas, .chart-card svg {
+            width: 100% !important;
+            height: auto !important;
+            display: block;
+        }
+        @media (max-width: 600px) {
+            .navbar, .hero {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
             }
-          },
-          y: {
-            title: {
-              display: true,
-              text: 'Efficiency (%)'
-            },
-            beginAtZero: true
-          }
+            .insights-panel, .dashboard-graphs {
+                padding: 1rem;
+            }
+            .hero .back-home-btn {
+                right: 1rem;
+                top: 1rem;
+            }
         }
-      }
-    });
-
-    // 4. Heatmap (Bubble Chart): Efficiency vs Weather & Maintenance
-    new Chart(document.getElementById('efficiencyHeatmap'), {
-      type: 'bubble',
-      data: {
-        datasets: [
-          {
-            label: 'Good Weather - Maintained',
-            data: [{x: 1, y: 90, r: 15}],
-            backgroundColor: '#26a69a'
-          },
-          {
-            label: 'Bad Weather - Maintained',
-            data: [{x: 2, y: 75, r: 15}],
-            backgroundColor: '#80cbc4'
-          },
-          {
-            label: 'Good Weather - Poor Maintenance',
-            data: [{x: 3, y: 70, r: 15}],
-            backgroundColor: '#b2dfdb'
-          },
-          {
-            label: 'Bad Weather - Poor Maintenance',
-            data: [{x: 4, y: 55, r: 15}],
-            backgroundColor: '#e0f2f1'
-          }
-        ]
-      },
-      options: {
-        plugins: {
-          title: {
-            display: true,
-            text: 'Efficiency vs Weather & Maintenance'
-          }
-        },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Conditions'
-            },
-            ticks: {
-              callback: function(value) {
-                return ['Good/Maintained', 'Bad/Maintained', 'Good/Poor', 'Bad/Poor'][value - 1];
-              }
-            },
-            min: 0,
-            max: 5
-          },
-          y: {
-            title: {
-              display: true,
-              text: 'Efficiency (%)'
-            },
-            beginAtZero: true,
-            max: 100
-          }
-        }
-      }
-    });
-  </script>
-
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo"><span>🚢</span> ShipMetrics</div>
+        <div class="nav-links">
+            <a href="/">Dashboard</a>
+            <a href="/Efficiency_analysis" class="active">Efficiency Analysis</a>
+            <a href="/maintenance_and_weather">Maintenance & Weather</a>
+            <a href="/operational_cost">Operational Cost</a>
+            <a href="/speed_and_engine">Speed & Engine</a>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <section class="hero">
+        <a href="/" class="back-home-btn">Back to Home</a>
+        <div class="hero-title">Efficiency Analysis</div>
+    </section>
+    <!-- Insights Section -->
+    <section class="insights-panel">
+        <div class="insights-title">Key Insights</div>
+        <div class="insights-grid">
+            <div class="insight-card">
+                <div class="insight-title">Maintenance Impact</div>
+                <div class="insight-text">Regular maintenance improves efficiency by up to 25% in adverse weather conditions.</div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-title">Route Optimization</div>
+                <div class="insight-text">Short domestic routes show 15% better efficiency compared to longer international routes.</div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-title">Weather Effects</div>
+                <div class="insight-text">Rough weather conditions can reduce efficiency by up to 20% in vessels with poor maintenance.</div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-title">Vessel Type Performance</div>
+                <div class="insight-text">Passenger ships demonstrate the highest average energy efficiency at 80%.</div>
+            </div>
+        </div>
+    </section>
+    <!-- Dashboard Graphs Section -->
+    <section class="dashboard-graphs">
+        <div class="chart-card">
+            <div class="chart-title">Ship Type vs Efficiency</div>
+            {{graph5|safe}}
+        </div>
+        <div class="chart-card">
+            <div class="chart-title">Efficiency vs Distance</div>
+            {{graph6|safe}}
+        </div>
+        <div class="chart-card">
+            <div class="chart-title">Speed vs Efficiency</div>
+            {{graph7|safe}}
+        </div>
+        <div class="chart-card">
+            <div class="chart-title">Weather & Maintenance Impact</div>
+            {{graph8|safe}}
+        </div>
+    </section>
 </body>
 </html>

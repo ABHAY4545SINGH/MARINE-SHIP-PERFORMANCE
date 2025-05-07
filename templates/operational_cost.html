@@ -1,172 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Operational Cost & Revenue Analysis</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-box-and-violin-plot/build/Chart.BoxPlot.js"></script>
+  <title>Operational Cost Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f9fc;
+    :root {
+      --primary: #2c3e50;
+      --accent: #3498db;
+      --light: #f5f6fa;
+      --success: #2ecc71;
+      --danger: #e74c3c;
+    }
+    * {
       margin: 0;
       padding: 0;
-      color: #333;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
     }
-
-    header {
-      background: #004d40;
+    body {
+      background: var(--light);
+      color: var(--primary);
+      line-height: 1.6;
+    }
+    /* Navbar */
+    .navbar {
+      width: 100%;
+      background: var(--primary);
       color: white;
-      padding: 2rem 1rem;
-      text-align: center;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: auto;
-    }
-
-    .section {
-      padding: 4rem 2rem;
-    }
-
-    .hero {
-      background: #e0f7fa;
-    }
-
-    .hero-alt {
-      background: #ffffff;
-    }
-
-    .chart-wrapper {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-      max-width: 800px;
-      margin: auto;
-    }
-
-    canvas {
-      width: 100% !important;
-      height: auto !important;
-    }
-
-    .kpi-cards {
       display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-bottom: 3rem;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0.7rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .navbar .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .navbar .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.3rem 0.8rem;
+      border-radius: 5px;
+      transition: background 0.2s;
+    }
+    .navbar .nav-links a.active, .navbar .nav-links a:hover {
+      background: var(--accent);
+    }
+    .navbar .logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-right: 2rem;
+    }
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(rgba(44,62,80,0.7), rgba(44,62,80,0.7)), url('https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1500&q=80') center/cover no-repeat;
+      padding: 2.5rem 2rem 2rem 2rem;
+      min-height: 180px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
       justify-content: center;
+      border-bottom: 1px solid #e0e0e0;
     }
-
-    .kpi {
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #fff;
+      z-index: 2;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    }
+    .hero .back-home-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 0.5rem 1.4rem;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+      z-index: 3;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    }
+    .hero .back-home-btn:hover {
+      background: #2176bd;
+    }
+    /* Insights */
+    .insights-panel {
       background: white;
-      padding: 1rem 2rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-      flex: 1 1 200px;
-      text-align: center;
+      margin: 2rem auto 1.5rem auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+      /* max-width: 900px; */
+      padding: 2rem 2rem 1.5rem 2rem;
     }
-
-    .kpi h3 {
+    .insights-title {
       font-size: 1.2rem;
-      color: #00796b;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      color: var(--primary);
     }
-
-    .kpi p {
-      font-size: 1.5rem;
-      font-weight: bold;
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.2rem;
     }
-
-    .conclusions {
-      background: #e0f2f1;
-      padding: 2rem;
-      border-radius: 10px;
-      margin: 3rem 2rem;
+    .insight-card {
+      background: #f8fafd;
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.2rem;
     }
-
-    .conclusions h2 {
-      color: #004d40;
+    .insight-title {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.3rem;
+    }
+    .insight-text {
+      color: #444;
+      font-size: 0.97rem;
+    }
+    /* Dashboard Graphs */
+    .dashboard-graphs {
+      max-width: 900px;
+      margin: 0 auto 2rem auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .chart-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+      width: 100%;
+      min-width: 0;
+    }
+    .chart-title {
+      font-size: 1.1rem;
+      color: var(--primary);
+      font-weight: 600;
       margin-bottom: 1rem;
     }
-
-    .conclusions ul {
-      line-height: 1.8;
+    .chart-card img, .chart-card canvas, .chart-card svg {
+      width: 100% !important;
+      height: auto !important;
+      display: block;
+    }
+    @media (max-width: 600px) {
+      .navbar, .hero {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+      }
+      .insights-panel, .dashboard-graphs {
+        padding: 1rem;
+      }
+      .hero .back-home-btn {
+        right: 1rem;
+        top: 1rem;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<header>
-  <h1>Operational Cost & Revenue Analysis</h1>
-  <p>Profitability and Cost Efficiency Insights by Ship and Route</p>
-</header>
-
-<div class="container section hero">
-  <div class="kpi-cards">
-    <div class="kpi">
-      <h3>Avg Revenue</h3>
-      <p>$1.3M</p>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo"><span>🚢</span> ShipMetrics</div>
+    <div class="nav-links">
+      <a href="/">Dashboard</a>
+      <a href="/Efficiency_analysis">Efficiency Analysis</a>
+      <a href="/maintenance_and_weather">Maintenance & Weather</a>
+      <a href="/operational_cost" class="active">Operational Cost</a>
+      <a href="/speed_and_engine">Speed & Engine</a>
     </div>
-    <div class="kpi">
-      <h3>Avg Cost</h3>
-      <p>$850K</p>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <a href="/" class="back-home-btn">Back to Home</a>
+    <div class="hero-title">Operational Cost Analysis</div>
+  </section>
+
+  <!-- Insights Section -->
+  <section class="insights-panel">
+    <div class="insights-title">Key Insights</div>
+    <div class="insights-grid">
+      <div class="insight-card">
+        <div class="insight-title">Fuel Cost Dominance</div>
+        <div class="insight-text">Fuel accounts for over 60% of total operational costs for most vessels.</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-title">Maintenance Savings</div>
+        <div class="insight-text">Regular maintenance can reduce annual operational costs by up to 18%.</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-title">Route Optimization</div>
+        <div class="insight-text">Optimized routes can save up to 12% in fuel and time-related costs.</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-title">Crew Efficiency</div>
+        <div class="insight-text">Efficient crew management can lower labor costs by 8% annually.</div>
+      </div>
     </div>
-    <div class="kpi">
-      <h3>Profit Margin</h3>
-      <p>34.6%</p>
+  </section>
+
+  <!-- Dashboard Graphs Section -->
+  <section class="dashboard-graphs">
+    <div class="chart-card">
+      <div class="chart-title">Cost Breakdown by Category</div>
+      {{graph1|safe}}
     </div>
-    <div class="kpi">
-      <h3>Outlier Voyages</h3>
-      <p>3</p>
+    <div class="chart-card">
+      <div class="chart-title">Operational Cost Over Time</div>
+      {{graph2|safe}}
     </div>
-  </div>
-</div>
-
-<!-- Scatter Plot -->
-<div class="section hero-alt">
-  <div class="chart-wrapper">
-    {{graph1|safe}}
-  </div>
-</div>
-
-<!-- Bar Chart -->
-<div class="section hero">
-  <div class="chart-wrapper">
-    {{graph2|safe}}
-  </div>
-</div>
-
-<!-- Grouped Bar Chart -->
-
-<div class="section hero-alt">
-  <div class="chart-wrapper">
-    {{graph3|safe}}
-  </div>
-</div>
-
-<!-- Box Plot -->
-<div class="section hero-alt">
-  <div class="chart-wrapper">
-    {{graph4|safe}}
-  </div>
-</div>
-
-
-
-<!-- Conclusions -->
-<div class="conclusions container">
-  <h2>Conclusions</h2>
-  <ul>
-    <li>🛳 <strong>Bulk Carriers</strong> and <strong>Container Ships</strong> are the most cost-effective per route.</li>
-    <li>💸 Some <strong>Transoceanic routes</strong> yield high revenue despite higher operational costs.</li>
-    <li>⚠ Outlier voyages with engine types <strong>EMD & MAN</strong> showed exceptionally high cost with low revenue.</li>
-  </ul>
-</div>
-
-
+    <div class="chart-card">
+      <div class="chart-title">Fuel Cost vs Distance</div>
+      {{graph3|safe}}
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Crew Cost vs Vessel Type</div>
+      {{graph4|safe}}
+    </div>
+  </section>
 
 </body>
 </html>
