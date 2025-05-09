@@ -3,27 +3,137 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Marine Metrics Dashboard</title>
+  <title>Ship Performance Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #2c3e50;
+      --secondary: #34495e;
+      --accent: #3498db;
+      --light: #ecf0f1;
+      --dark: #2c3e50;
+      --success: #2ecc71;
+      --warning: #f1c40f;
+      --danger: #e74c3c;
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f6fa;
+      color: var(--dark);
       line-height: 1.6;
-      color: #0a0a0a;
-      background: #e0f7fa;
-      scroll-behavior: smooth;
     }
 
-    /* Animation keyframes */
-    @keyframes fadeInUp {
+    /* Navbar Styles */
+    .navbar {
+      background: var(--primary);
+      padding: 1rem 5%;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      color: white;
+      font-size: 1.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 100vh;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      display: flex;
+      align-items: center;
+      padding: 0 5%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1500&q=80') center/cover;
+      opacity: 0.1;
+      animation: zoom 20s infinite alternate;
+    }
+
+    @keyframes zoom {
+      from { transform: scale(1); }
+      to { transform: scale(1.2); }
+    }
+
+    .hero-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      color: white;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-content h1 {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+      animation: slideUp 1s ease;
+    }
+
+    .hero-content p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      animation: slideUp 1s ease 0.2s backwards;
+    }
+
+    @keyframes slideUp {
       from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(50px);
       }
       to {
         opacity: 1;
@@ -31,228 +141,363 @@
       }
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-
-    .fade-in {
-      animation: fadeIn 1s ease forwards;
-      opacity: 0;
-    }
-
-    .fade-in-up {
-      animation: fadeInUp 1s ease forwards;
-      opacity: 0;
-    }
-
-    /* Navbar */
-    .navbar {
+    .cta-buttons {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #006064;
+      gap: 1rem;
+      animation: slideUp 1s ease 0.4s backwards;
+    }
+
+    .cta-button {
       padding: 1rem 2rem;
-      color: white;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    .navbar .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    .nav-links a {
-      color: white;
+      border-radius: 30px;
       text-decoration: none;
-      margin-left: 1.5rem;
-      font-weight: 500;
-      transition: color 0.3s ease, transform 0.3s ease;
+      font-weight: 600;
+      transition: all 0.3s ease;
     }
 
-    .nav-links a:hover {
-      color: #80deea;
-      transform: scale(1.05);
-    }
-
-    /* Hero Section */
-    .hero {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      padding: 5rem 2rem;
-      background: linear-gradient(to right, #e0f7fa, #ffffff);
-      animation: fadeIn 1.5s ease-in-out;
-    }
-
-    .hero-text {
-      flex: 1 1 45%;
-      padding: 1rem;
-      animation: fadeInUp 1.2s ease-in-out;
-    }
-
-    .hero-text h1 {
-      font-size: 3.2rem;
-      margin-bottom: 1rem;
-      color: #004d40;
-    }
-
-    .hero-text p {
-      font-size: 1.2rem;
-      color: #333;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero-text .cta-button {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      background-color: #00838f;
+    .primary-btn {
+      background: var(--accent);
       color: white;
-      text-decoration: none;
-      border-radius: 25px;
-      transition: background-color 0.3s ease, transform 0.3s ease;
     }
 
-    .hero-text .cta-button:hover {
-      background-color: #006064;
-      transform: scale(1.05);
+    .secondary-btn {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
     }
 
-    .hero-img {
-      flex: 1 1 45%;
-      padding: 1rem;
-      text-align: center;
-      animation: fadeInUp 1.5s ease-in-out;
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     }
 
-    .hero-img img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease;
-    }
-
-    .hero-img img:hover {
-      transform: scale(1.03);
-    }
-
-    /* Marine Metrics Section */
+    /* Metrics Section */
     .metrics {
-      padding: 4rem 2rem;
-      background: #b2ebf2;
-      text-align: center;
+      padding: 5rem 5%;
+      background: white;
     }
 
-    .metrics h2 {
+    .metrics-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-title h2 {
       font-size: 2.5rem;
-      color: #004d40;
-      margin-bottom: 2rem;
-      animation: fadeIn 1.2s ease-in-out;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .section-title p {
+      color: #666;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     .metrics-grid {
-      display: flex;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 2rem;
-      flex-wrap: wrap;
     }
 
     .metric-card {
       background: white;
       padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      width: 250px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      animation: fadeInUp 1.3s ease-in-out;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
     }
 
     .metric-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      transform: translateY(-10px);
     }
 
-    .metric-card h3 {
-      color: #00796b;
-      font-size: 1.5rem;
+    .metric-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .metric-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+
+    .metric-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
       margin-bottom: 0.5rem;
     }
 
-    .metric-card p {
-      color: #333;
-      font-size: 1rem;
+    .metric-label {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 5rem 5%;
+      background: #f5f6fa;
+    }
+
+    .features-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-icon svg {
+      width: 30px;
+      height: 30px;
+      fill: white;
+    }
+
+    .feature-title {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .feature-desc {
+      color: #666;
+      line-height: 1.6;
     }
 
     /* Footer */
     .footer {
-      background: #004d40;
+      background: var(--primary);
       color: white;
+      padding: 3rem 5%;
       text-align: center;
-      padding: 1rem;
-      animation: fadeIn 1s ease-in-out;
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .footer p {
+      margin-bottom: 1rem;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .social-links a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+      background: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .hero-content h1 {
+        font-size: 2.5rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .metrics-grid, .features-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-
-  <div class="navbar">
-    <div class="logo">OceanData</div>
-    <div class="nav-links">
-      <a href="#">Home</a>
-      <a href="#metrics">Data Metrics</a>
-      <a href="/about">About</a>
-      <a href="/contact">Contact</a>
-      <a href="/login">Login</a>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <span>🚢</span> ShipMetrics
+      </a>
+      <div class="nav-links">
+        <a href="#dashboard">Dashboard</a>
+        <a href="#analytics">Analytics</a>
+        <a href="#reports">Reports</a>
+        <a href="#login">Login</a>
+      </div>
     </div>
-  </div>
+  </nav>
 
   <section class="hero">
-    <div class="hero-text">
-      <h1>Explore Real-Time Marine Metrics</h1>
-      <p>Dive into oceanographic data like  to understand our changing seas.</p>
-      <a href="#metrics" class="cta-button">View Metrics</a>
-    </div>
-    <div class="hero-img">
-      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e" alt="Marine Data Ocean View">
+    <div class="hero-content">
+      <h1>Ship Performance Analytics</h1>
+      <p>Advanced maritime analytics platform for monitoring and optimizing vessel performance in the Gulf of Guinea</p>
+      <div class="cta-buttons">
+        <a href="#dashboard" class="cta-button primary-btn">Get Started</a>
+        <a href="#features" class="cta-button secondary-btn">Learn More</a>
+      </div>
     </div>
   </section>
 
-  <section class="metrics" id="metrics">
-    <h2>Live Marine Metrics</h2>
-    <div class="metrics-grid">
-      <a href="/maintenance_and_weather"><div class="metric-card">
-        <h3>Maintenance and Weather</h3>
-        <p>Avg: 22°C<br>Tracked globally via buoys and satellites.</p>
-      </div></a>
-      <a href="/Efficiency_analysis"><div class="metric-card">
-        <h3>Efficiency analysis</h3>
-        <p>Avg: 35 PSU<br>Critical for understanding ocean circulation.</p>
-      </div></a>
-      <a href="/Dashboard"><div class="metric-card">
-        <h3>Dashboard</h3>
-        <p>Avg: 1.2 m<br>Measured to monitor coastal safety and ship routes.</p>
-      </div></a>
-      <a href="/operational_cost"><div class="metric-card">
-        <h3>Operational cost</h3>
-        <p>Avg: 1.2 m<br>Measured to monitor coastal safety and ship routes.</p>
-      </div></a>
-      <a href="/speed_and_engine"><div class="metric-card">
-        <h3>Speed and Engine</h3>
-        <p>Avg: 1.2 m<br>Measured to monitor coastal safety and ship routes.</p>
-      </div></a>
+  <section class="metrics" id="dashboard">
+    <div class="metrics-container">
+      <div class="section-title">
+        <h2>Key Performance Metrics</h2>
+        <p>Real-time monitoring of critical vessel performance indicators</p>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon">📊</div>
+          <div class="metric-value">18.5</div>
+          <div class="metric-label">Average Speed (knots)</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">⛽</div>
+          <div class="metric-value">92.4%</div>
+          <div class="metric-label">Fuel Efficiency</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">🎯</div>
+          <div class="metric-value">87.2%</div>
+          <div class="metric-label">Route Optimization</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">🚢</div>
+          <div class="metric-value">156</div>
+          <div class="metric-label">Active Vessels</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="features-container">
+      <div class="section-title">
+        <h2>Advanced Features</h2>
+        <p>Comprehensive tools for maritime operations management</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Real-time Monitoring</h3>
+          <p class="feature-desc">Track vessel performance, fuel consumption, and route efficiency with live data updates and instant alerts.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14h-2V9h-2V7h4v10z"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Predictive Analytics</h3>
+          <p class="feature-desc">Leverage AI-powered insights to optimize routes, reduce costs, and improve operational efficiency.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Security & Compliance</h3>
+          <p class="feature-desc">Ensure maritime security and regulatory compliance with advanced monitoring and reporting tools.</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <footer class="footer">
-    &copy; 2025 OceanData. All rights reserved.
+    <div class="footer-content">
+      <p>© 2024 Ship Performance Dashboard. All rights reserved.</p>
+      <div class="social-links">
+        <a href="#" title="Twitter">🐦</a>
+        <a href="#" title="LinkedIn">🔗</a>
+        <a href="#" title="GitHub">💻</a>
+      </div>
+    </div>
   </footer>
 
+  <script>
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    // Animate metrics on scroll
+    const observerOptions = {
+      threshold: 0.5
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.metric-card').forEach(card => {
+      observer.observe(card);
+    });
+  </script>
 </body>
 </html>
