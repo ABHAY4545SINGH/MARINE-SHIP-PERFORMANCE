@@ -363,12 +363,12 @@ def speed_distribution():
 
 # Operational Cost Vs Revenue
 
-@app.route('/Dashboard')
-def Dashboard():
+@app.route('/Overview')
+def Overview():
     graph9 = ship_type_distribution()
     graph10 = Route_type_distribution()
     graph11 = Weekly_voyage_count_by_ship_type()
-    return render_template('Dashboard.html', graph9=graph9, graph10=graph10, graph11=graph11)
+    return render_template('Overview.html', graph9=graph9, graph10=graph10, graph11=graph11)
 
 @app.route('/Efficiency_analysis')
 def Efficiency_analysis():

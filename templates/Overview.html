@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Marine Metrics Overview Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --accent: #3498db;
+      --light: #f5f6fa;
+      --success: #2ecc71;
+      --danger: #e74c3c;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: var(--light);
+      color: var(--primary);
+      line-height: 1.6;
+    }
+    /* Navbar */
+    .navbar {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0.7rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .navbar .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .navbar .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.3rem 0.8rem;
+      border-radius: 5px;
+      transition: background 0.2s;
+    }
+    .navbar .nav-links a.active, .navbar .nav-links a:hover {
+      background: var(--accent);
+    }
+    .navbar .logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-right: 2rem;
+    }
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(rgba(44,62,80,0.7), rgba(44,62,80,0.7)), url('https://www.hma.no/library/_945x510_crop_center-center_90_none/ship-performance-monitor-v2.png') center/cover no-repeat;
+      padding: 2.5rem 2rem 2rem 2rem;
+      min-height: 180px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #fff;
+      z-index: 2;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    }
+    .hero .back-home-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 0.5rem 1.4rem;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+      z-index: 3;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    }
+    .hero .back-home-btn:hover {
+      background: #2176bd;
+    }
+    /* KPI Cards */
+    .kpi-panel {
+      background: white;
+      margin: 2rem auto 1.5rem auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+      padding: 2rem 2rem 1.5rem 2rem;
+      max-width: 900px;
+    }
+    .kpi-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.2rem;
+    }
+    .kpi-card {
+      background: #f8fafd;
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.2rem;
+      text-align: left;
+    }
+    .kpi-title {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.3rem;
+      font-size: 1.1rem;
+    }
+    .kpi-value {
+      color: #444;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    /* Chart Cards */
+    .dashboard-graphs {
+      max-width: 900px;
+      margin: 0 auto 2rem auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .chart-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+      width: 100%;
+      min-width: 0;
+    }
+    .chart-title {
+      font-size: 1.1rem;
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .chart-card img, .chart-card canvas, .chart-card svg {
+      width: 100% !important;
+      height: auto !important;
+      display: block;
+    }
+    /* Conclusions */
+    .conclusions-panel {
+      background: #e0f2f1;
+      padding: 2rem;
+      border-radius: 10px;
+      margin: 3rem auto 2rem auto;
+      max-width: 900px;
+    }
+    .conclusions-panel h2 {
+      color: #004d40;
+      margin-bottom: 1rem;
+    }
+    .conclusions-panel ul {
+      line-height: 1.8;
+      margin-left: 1.2rem;
+    }
+    @media (max-width: 600px) {
+      .navbar, .hero {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+      }
+      .kpi-panel, .dashboard-graphs, .conclusions-panel {
+        padding: 1rem;
+      }
+      .hero .back-home-btn {
+        right: 1rem;
+        top: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo"><span>🚢</span> ShipMetrics</div>
+    <div class="nav-links">
+      <a href="/">Dashboard</a>
+      <a href="/Overview" class="active">Overview</a>
+      <a href="/Efficiency_analysis">Efficiency Analysis</a>
+      <a href="/maintenance_and_weather">Maintenance & Weather</a>
+      <a href="/operational_cost">Operational Cost</a>
+      <a href="/speed_and_engine">Speed & Engine</a>
+    </div>
+  </nav>
+  <!-- Hero Section -->
+  <section class="hero">
+    <a href="/" class="back-home-btn">Back to Home</a>
+    <div class="hero-title">Marine Metrics Overview</div>
+  </section>
+  <!-- KPI Cards -->
+  <section class="kpi-panel">
+    <div class="kpi-cards">
+      <div class="kpi-card">
+        <div class="kpi-title">Average Speed</div>
+        <div class="kpi-value">18.2 knots</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Revenue</div>
+        <div class="kpi-value">$1.25M</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Cost</div>
+        <div class="kpi-value">$850K</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Efficiency</div>
+        <div class="kpi-value">72%</div>
+      </div>
+    </div>
+  </section>
+  <!-- Dashboard Graphs Section -->
+  <section class="dashboard-graphs">
+    <div class="chart-card">
+      <div class="chart-title">Ship Type Distribution</div>
+      <canvas id="shipTypePie"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Route Type vs Number of Ships</div>
+      <canvas id="routeBar"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Revenue Trend Over Voyages</div>
+      <canvas id="revenueLine"></canvas>
+    </div>
+  </section>
+  <!-- Conclusions -->
+  <div class="conclusions-panel">
+    <h2>Conclusions</h2>
+    <ul>
+      <li>🚢 <strong>Container Ships</strong> are the most common ship type.</li>
+      <li>🛣 <strong>International Routes</strong> are the most frequently used.</li>
+      <li>📊 The average speed is 18.2 knots, efficiency is 72%, with revenue at $1.25M and cost at $850K.</li>
+    </ul>
+  </div>
+  <!-- Chart.js Scripts -->
+  <script>
+    // Pie Chart: Ship Type Distribution
+    new Chart(document.getElementById('shipTypePie'), {
+      type: 'pie',
+      data: {
+        labels: ['Container', 'Tanker', 'Bulk Carrier', 'Passenger', 'Other'],
+        datasets: [{
+          label: 'Ship Types',
+          data: [45, 25, 15, 10, 5],
+          backgroundColor: ['#00838f', '#006064', '#4db6ac', '#80cbc4', '#b2dfdb']
+        }]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: false
+          }
+        }
+      }
+    });
+
+    // Bar Chart: Route Type vs Number of Ships
+    new Chart(document.getElementById('routeBar'), {
+      type: 'bar',
+      data: {
+        labels: ['Domestic', 'International', 'Coastal', 'Transoceanic'],
+        datasets: [{
+          label: 'Number of Ships',
+          data: [120, 300, 90, 150],
+          backgroundColor: '#00796b'
+        }]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Line Chart: Revenue Trend Over Voyages
+    new Chart(document.getElementById('revenueLine'), {
+      type: 'line',
+      data: {
+        labels: ['Voyage 1', 'Voyage 2', 'Voyage 3', 'Voyage 4', 'Voyage 5'],
+        datasets: [{
+          label: 'Revenue ($)',
+          data: [900000, 1000000, 1100000, 1250000, 1300000],
+          fill: false,
+          borderColor: '#006064',
+          tension: 0.3
+        }]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
