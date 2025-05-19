@@ -6,6 +6,12 @@ import plotly.graph_objects as go
 import plotly.io as pio
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import bcrypt
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler, LabelEncoder
+from sklearn.cluster import KMeans
+import joblib
+import warnings
+warnings.filterwarnings("ignore")
 
 app = Flask(__name__)
 app.secret_key = 'supersecretmre'
@@ -35,8 +41,29 @@ class User(db.Model):
 with app.app_context():
     db.create_all()
 
-df = pd.read_csv('Ship_Performance_Dataset.csv')
+# Load the trained model
+try:
+    model = joblib.load('ship_performance_dt_model.pkl')
+except:
+    model = None
 
+# Load and preprocess the data
+# Use the dataset with clusters for prediction and efficiency lookup
+df = pd.read_csv('Ship_Performance_Dataset_with_Clusters.csv')
+
+# Create label encoders for categorical variables
+label_encoders = {}
+categorical_columns = ['Ship_Type', 'Route_Type', 'Engine_Type', 'Maintenance_Status', 'Weather_Condition']
+
+for column in categorical_columns:
+    label_encoders[column] = LabelEncoder()
+    label_encoders[column].fit(df[column].unique())
+
+# Create scaler for numerical variables
+scaler = MinMaxScaler()
+numerical_columns = ['Speed_Over_Ground_knots', 'Engine_Power_kW', 'Distance_Traveled_nm', 
+                    'Draft_meters', 'Cargo_Weight_tons']
+scaler.fit(df[numerical_columns])
 
 @app.route('/')
 def index():
@@ -403,6 +430,120 @@ def speed_and_engine():
     graph18 = engine_power_vs_average_speed()
     graph19 = speed_distribution()
     return render_template('speed_and_engine.html', graph16=graph16, graph17=graph17, graph18=graph18, graph19=graph19)
+
+@app.route('/prediction', methods=['GET', 'POST'])
+def predict():
+    if request.method == 'POST':
+        try:
+            # Model training features
+            model_features = [
+                'Ship_Type', 'Route_Type', 'Engine_Type', 'Maintenance_Status',
+                'Speed_Over_Ground_knots', 'Engine_Power_kW', 'Distance_Traveled_nm',
+                'Draft_meters', 'Weather_Condition', 'Cargo_Weight_tons',
+                'Operational_Cost_USD', 'Revenue_per_Voyage_USD', 'Turnaround_Time_hours',
+                'Efficiency_nm_per_kWh', 'Seasonal_Impact_Score', 'Weekly_Voyage_Count',
+                'Average_Load_Percentage'
+            ]
+
+            # Get form data
+            data = {
+                'Ship_Type': request.form['ship_type'],
+                'Route_Type': request.form['route_type'],
+                'Engine_Type': request.form['engine_type'],
+                'Maintenance_Status': request.form['maintenance_status'],
+                'Speed_Over_Ground_knots': float(request.form['speed']),
+                'Engine_Power_kW': float(request.form['engine_power']),
+                'Distance_Traveled_nm': float(request.form['distance']),
+                'Draft_meters': float(request.form['draft']),
+                'Weather_Condition': request.form['weather'],
+                'Cargo_Weight_tons': float(request.form['cargo_weight'])
+            }
+
+            # Add missing features with default value 0
+            for col in model_features:
+                if col not in data:
+                    data[col] = 0
+
+            # Create DataFrame in correct order
+            input_df = pd.DataFrame([data])[model_features]
+
+            # Transform categorical variables
+            for column in categorical_columns:
+                input_df[column] = label_encoders[column].transform(input_df[column])
+
+            # Transform numerical variables
+            input_df[numerical_columns] = scaler.transform(input_df[numerical_columns])
+
+            # Make prediction
+            if model is not None:
+                cluster = model.predict(input_df)[0]
+                print('Predicted cluster:', cluster)
+                # Flexible cluster column name check
+                cluster_col = None
+                for col in df.columns:
+                    if col.lower() == 'cluster':
+                        cluster_col = col
+                        break
+                if cluster_col:
+                    efficiency_rows = df[df[cluster_col] == cluster]
+                    print('Rows matching cluster:', len(efficiency_rows))
+                    if not efficiency_rows.empty:
+                        efficiency = efficiency_rows['Efficiency_nm_per_kWh'].mean()
+                        # Cluster explanations
+                        cluster_explanations = {
+                            0: [
+                                "Very High Power",
+                                "Maximum Operating Cost",
+                                "Needs Machine Upgrade",
+                                "Requires Efficiency Improvement",
+                                "Lowest Revenue Generated"
+                            ],
+                            1: [
+                                "Most Profitable Ships",
+                                "Covers Longest Routes",
+                                "Has Advanced Technology",
+                                "Carries Heavy Cargo",
+                                "Lowest Operating Cost"
+                            ],
+                            2: [
+                                "Shows Balanced Performance",
+                                "Uses Average Power",
+                                "Has Good Revenue",
+                                "Takes Shortest Routes",
+                                "Needs Cost Reduction"
+                            ],
+                            3: [
+                                "Minimal Engine Power",
+                                "For Short Routes",
+                                "Carries Light Cargo",
+                                "Below Average Revenue",
+                                "High Operating Cost"
+                            ]
+                        }
+                        efficiency_explanation = (
+                            "Efficiency_nm_per_kWh means how many nautical miles a ship can travel using one kilowatt-hour (kWh) of energy. "
+                            "A higher value indicates a more energy-efficient ship."
+                        )
+                        prediction = {
+                            'cluster': int(cluster),
+                            'efficiency': round(efficiency, 2),
+                            'efficiency_explanation': efficiency_explanation,
+                            'cluster_explanation': cluster_explanations.get(int(cluster), [])
+                        }
+                    else:
+                        prediction = {'error': f'No data found for predicted cluster {cluster}.'}
+                else:
+                    prediction = {'error': 'Cluster column not found in dataset.'}
+            else:
+                prediction = {'error': 'Model not loaded properly'}
+
+            return render_template('prediction.html', prediction=prediction)
+
+        except Exception as e:
+            print('Prediction error:', e)
+            return render_template('prediction.html', prediction={'error': str(e)})
+
+    return render_template('prediction.html')
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
