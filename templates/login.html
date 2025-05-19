@@ -3,9 +3,37 @@
 <head>
 	<title>login/Sign up </title>
 	<link rel="stylesheet" type="text/css" href="login.css">
-<link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
 </head>
 <style>
+    .flash-container {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        width: 80%;
+        max-width: 400px;
+    }
+    .flash-message {
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        text-align: center;
+        animation: fadeIn 0.5s;
+    }
+    .flash-message.success {
+        background-color: rgba(46, 204, 113, 0.9);
+        color: white;
+    }
+    .flash-message.error {
+        background-color: rgba(231, 76, 60, 0.9);
+        color: white;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
     body{
 	margin: 0;
 	padding: 0;
@@ -99,6 +127,18 @@ button:hover{
 
 </style>
 <body>
+    <div class="flash-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
 	<div class="main">  	
 		<input type="checkbox" id="chk" aria-hidden="true">
 
@@ -118,8 +158,21 @@ button:hover{
 					<input type="text" name="username" placeholder="Email" required="">
 					<input type="password" name="password" placeholder="Password" required="">
 					<button>Login</button>
-				</form>
-			</div>
+				</form>			</div>
 	</div>
+    <script>
+        // Auto-hide flash messages after 3 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            let flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(function(message) {
+                setTimeout(function() {
+                    message.style.opacity = '0';
+                    setTimeout(function() {
+                        message.remove();
+                    }, 500);
+                }, 3000);
+            });
+        });
+    </script>
 </body>
 </html>

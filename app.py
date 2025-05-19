@@ -40,7 +40,8 @@ df = pd.read_csv('Ship_Performance_Dataset.csv')
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    is_logged_in = 'user_id' in session
+    return render_template('index.html', is_logged_in=is_logged_in)
 
 @app.route('/about')
 def about():
@@ -57,12 +58,22 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(username=username).first() or User.query.filter_by(email=username).first()
         if not user:
-            return jsonify({'message': 'User not found!'})
+            flash('User not found!', 'error')
+            return redirect(url_for('login'))
         if user and user.check_password(password):
-            return jsonify({'message': 'Login successful!'})
+            session['user_id'] = user.id
+            flash('Login successful!', 'success')
+            return redirect(url_for('index'))
         else:
-            return jsonify({'message': 'Invalid username or password!'})
+            flash('Invalid username or password!', 'error')
+            return redirect(url_for('login'))
     return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    flash('You have been logged out successfully', 'success')
+    return redirect(url_for('index'))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -70,13 +81,15 @@ def register():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
-        existing_user = User.query.filter_by(username=username).first()
+        existing_user = User.query.filter_by(username=username).first() or User.query.filter_by(email=email).first()
         if existing_user:
-            return jsonify({'message': 'Username already exists!'})
+            flash('Username or email already exists!', 'error')
+            return redirect(url_for('register'))
         new_user = User(username=username, password=password, email=email)
         db.session.add(new_user)
         db.session.commit()
-        return jsonify({'message': 'Registration successful!'})
+        flash('Registration successful! Please login.', 'success')
+        return redirect(url_for('login'))
     return render_template('login.html')
 
 

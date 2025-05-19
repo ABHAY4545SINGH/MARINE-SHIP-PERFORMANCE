@@ -66,14 +66,34 @@
     .nav-links {
       display: flex;
       gap: 2rem;
-    }
-
-    .nav-links a {
+    }    .nav-links a {
       color: white;
       text-decoration: none;
       font-weight: 500;
       padding: 0.5rem 1rem;
       border-radius: 5px;
+    }
+    
+    .nav-button {
+      padding: 0.5rem 1.5rem !important;
+    }
+
+    .nav-button.login {
+      background: var(--accent);
+      border: 2px solid var(--accent);
+    }
+
+    .nav-button.logout {
+      background: var(--danger);
+      border: 2px solid var(--danger);
+    }
+
+    .nav-button:hover {
+      opacity: 0.9;
+      transform: translateY(-2px) !important;
+    }
+
+    .nav-links a {
       transition: all 0.3s ease;
     }
 
@@ -370,12 +390,15 @@
     <div class="nav-container">
       <a href="#" class="logo">
         <span>🚢</span> ShipMetrics
-      </a>
-      <div class="nav-links">
-        <a href="/Dashboard">Dashboard</a>
+      </a>      <div class="nav-links">
+        <a href="/">Dashboard</a>
         <a href="/Overview">Analytics</a>
         <a href="#reports">Reports</a>
-        <a href="/login">Login</a>
+        {% if is_logged_in %}
+          <a href="/logout" class="nav-button logout">Logout</a>
+        {% else %}
+          <a href="/login" class="nav-button login">Login</a>
+        {% endif %}
       </div>
     </div>
   </nav>
