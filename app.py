@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from werkzeug.utils import secure_filename
+from functools import wraps
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -40,6 +41,16 @@ class User(db.Model):
     
 with app.app_context():
     db.create_all()
+
+# Login required decorator
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            flash('Please login to access this page', 'error')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Load the trained model
 try:
@@ -404,6 +415,7 @@ def speed_distribution():
 # Operational Cost Vs Revenue
 
 @app.route('/Overview')
+@login_required
 def Overview():
     graph9 = ship_type_distribution()
     graph10 = Route_type_distribution()
@@ -411,6 +423,7 @@ def Overview():
     return render_template('Overview.html', graph9=graph9, graph10=graph10, graph11=graph11)
 
 @app.route('/Efficiency_analysis')
+@login_required
 def Efficiency_analysis():
     graph5 = average_efficiency_ship_type()
     graph6 = efficiency_vs_distance_traveled()
@@ -420,6 +433,7 @@ def Efficiency_analysis():
 
 
 @app.route('/maintenance_and_weather')
+@login_required
 def maintenance_and_weather():
     graph12 = maintenancce_status_vs_average_speed_cost()
     graph13 = weather_conditions_vs_efficiency()
@@ -429,6 +443,7 @@ def maintenance_and_weather():
     
 
 @app.route('/operational_cost')
+@login_required
 def operational_cost():
     graph1 = operational_costvsrevenue()
     graph2 = average_operational_cost()
@@ -437,6 +452,7 @@ def operational_cost():
     return render_template('operational_cost.html', graph1=graph1, graph2=graph2, graph3=graph3, graph4=graph4)
 
 @app.route('/speed_and_engine')
+@login_required
 def speed_and_engine():
     graph16 = Speed_over_ground_vs_distance_travelled()
     graph17 = engine_type_vs_average_speed()
@@ -445,6 +461,7 @@ def speed_and_engine():
     return render_template('speed_and_engine.html', graph16=graph16, graph17=graph17, graph18=graph18, graph19=graph19)
 
 @app.route('/prediction', methods=['GET', 'POST'])
+@login_required
 def predict():
     if request.method == 'POST':
         try:
